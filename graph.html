@@ -1,0 +1,873 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
+                <script src="lib/tom-select/tom-select.complete.min.js"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 750px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="Le Kremlin-Bicêtre">Le Kremlin-Bicêtre</option>
+                                
+                                    <option value="College Park">College Park</option>
+                                
+                                    <option value="Edinburgh">Edinburgh</option>
+                                
+                                    <option value="Florianópolis">Florianópolis</option>
+                                
+                                    <option value="Jinan">Jinan</option>
+                                
+                                    <option value="Xinxiang">Xinxiang</option>
+                                
+                                    <option value="Vancouver">Vancouver</option>
+                                
+                                    <option value="Pune">Pune</option>
+                                
+                                    <option value="Wellington">Wellington</option>
+                                
+                                    <option value="Essen">Essen</option>
+                                
+                                    <option value="La Laguna">La Laguna</option>
+                                
+                                    <option value="Shengli">Shengli</option>
+                                
+                                    <option value="Hangzhou">Hangzhou</option>
+                                
+                                    <option value="Lausanne">Lausanne</option>
+                                
+                                    <option value="Taylor">Taylor</option>
+                                
+                                    <option value="New York City">New York City</option>
+                                
+                                    <option value="Guangzhou">Guangzhou</option>
+                                
+                                    <option value="Hiroshima-shi">Hiroshima-shi</option>
+                                
+                                    <option value="Krasnoyarsk">Krasnoyarsk</option>
+                                
+                                    <option value="Yangzhou">Yangzhou</option>
+                                
+                                    <option value="Jilin">Jilin</option>
+                                
+                                    <option value="Gyeongsan-si">Gyeongsan-si</option>
+                                
+                                    <option value="Jingzhou">Jingzhou</option>
+                                
+                                    <option value="Oregon">Oregon</option>
+                                
+                                    <option value="Wuhan">Wuhan</option>
+                                
+                                    <option value="Oral">Oral</option>
+                                
+                                    <option value="Auckland">Auckland</option>
+                                
+                                    <option value="Hirakata">Hirakata</option>
+                                
+                                    <option value="Riverside">Riverside</option>
+                                
+                                    <option value="Tianjin">Tianjin</option>
+                                
+                                    <option value="Chandigarh">Chandigarh</option>
+                                
+                                    <option value="Coimbatore">Coimbatore</option>
+                                
+                                    <option value="Potchefstroom">Potchefstroom</option>
+                                
+                                    <option value="Bengbu">Bengbu</option>
+                                
+                                    <option value="Wuxi">Wuxi</option>
+                                
+                                    <option value="Ramadi">Ramadi</option>
+                                
+                                    <option value="Durham">Durham</option>
+                                
+                                    <option value="Monteiro">Monteiro</option>
+                                
+                                    <option value="Edmonton">Edmonton</option>
+                                
+                                    <option value="Los Angeles">Los Angeles</option>
+                                
+                                    <option value="Pathankot">Pathankot</option>
+                                
+                                    <option value="Groningen">Groningen</option>
+                                
+                                    <option value="Kusatsu">Kusatsu</option>
+                                
+                                    <option value="Da Nang">Da Nang</option>
+                                
+                                    <option value="Selçuk">Selçuk</option>
+                                
+                                    <option value="Thatta">Thatta</option>
+                                
+                                    <option value="Essex">Essex</option>
+                                
+                                    <option value="Jalandhar">Jalandhar</option>
+                                
+                                    <option value="Colombia">Colombia</option>
+                                
+                                    <option value="Lethbridge">Lethbridge</option>
+                                
+                                    <option value="Ulm">Ulm</option>
+                                
+                                    <option value="Newcastle">Newcastle</option>
+                                
+                                    <option value="Shenzhen">Shenzhen</option>
+                                
+                                    <option value="Kunming">Kunming</option>
+                                
+                                    <option value="Wenzhou">Wenzhou</option>
+                                
+                                    <option value="Royan">Royan</option>
+                                
+                                    <option value="Huangshi">Huangshi</option>
+                                
+                                    <option value="Linden">Linden</option>
+                                
+                                    <option value="George">George</option>
+                                
+                                    <option value="Ajman">Ajman</option>
+                                
+                                    <option value="Dongfeng">Dongfeng</option>
+                                
+                                    <option value="Phoenix">Phoenix</option>
+                                
+                                    <option value="Guiyang">Guiyang</option>
+                                
+                                    <option value="Frome">Frome</option>
+                                
+                                    <option value="Tondabayashichō">Tondabayashichō</option>
+                                
+                                    <option value="Singapore">Singapore</option>
+                                
+                                    <option value="Zhenjiang">Zhenjiang</option>
+                                
+                                    <option value="Maastricht">Maastricht</option>
+                                
+                                    <option value="Santa Catarina">Santa Catarina</option>
+                                
+                                    <option value="Bhīmavaram">Bhīmavaram</option>
+                                
+                                    <option value="Inđija">Inđija</option>
+                                
+                                    <option value="Manchester">Manchester</option>
+                                
+                                    <option value="Elūru">Elūru</option>
+                                
+                                    <option value="Kanazawa-shi">Kanazawa-shi</option>
+                                
+                                    <option value="Tehrān">Tehrān</option>
+                                
+                                    <option value="Union">Union</option>
+                                
+                                    <option value="Boulder">Boulder</option>
+                                
+                                    <option value="Lomonosov">Lomonosov</option>
+                                
+                                    <option value="London">London</option>
+                                
+                                    <option value="Lages">Lages</option>
+                                
+                                    <option value="Montpellier">Montpellier</option>
+                                
+                                    <option value="Guntūr">Guntūr</option>
+                                
+                                    <option value="Seattle">Seattle</option>
+                                
+                                    <option value="Kottayam">Kottayam</option>
+                                
+                                    <option value="Spokane">Spokane</option>
+                                
+                                    <option value="Patiāla">Patiāla</option>
+                                
+                                    <option value="Lanzhou">Lanzhou</option>
+                                
+                                    <option value="Konya">Konya</option>
+                                
+                                    <option value="Cleveland">Cleveland</option>
+                                
+                                    <option value="Seoul">Seoul</option>
+                                
+                                    <option value="Nagar">Nagar</option>
+                                
+                                    <option value="Vienna">Vienna</option>
+                                
+                                    <option value="Chengalpattu">Chengalpattu</option>
+                                
+                                    <option value="Maha Sarakham">Maha Sarakham</option>
+                                
+                                    <option value="Namur">Namur</option>
+                                
+                                    <option value="Temuco">Temuco</option>
+                                
+                                    <option value="Durg">Durg</option>
+                                
+                                    <option value="Madison">Madison</option>
+                                
+                                    <option value="Beijing">Beijing</option>
+                                
+                                    <option value="Federal Way">Federal Way</option>
+                                
+                                    <option value="Tokyo">Tokyo</option>
+                                
+                                    <option value="Tsukuba">Tsukuba</option>
+                                
+                                    <option value="Hefei">Hefei</option>
+                                
+                                    <option value="Jixi">Jixi</option>
+                                
+                                    <option value="Graz">Graz</option>
+                                
+                                    <option value="Ufa">Ufa</option>
+                                
+                                    <option value="Moscow">Moscow</option>
+                                
+                                    <option value="Noto">Noto</option>
+                                
+                                    <option value="Lincoln">Lincoln</option>
+                                
+                                    <option value="Kowloon">Kowloon</option>
+                                
+                                    <option value="Johor Bahru">Johor Bahru</option>
+                                
+                                    <option value="Fujisawa">Fujisawa</option>
+                                
+                                    <option value="Jizan">Jizan</option>
+                                
+                                    <option value="Chengdu">Chengdu</option>
+                                
+                                    <option value="Bangkok">Bangkok</option>
+                                
+                                    <option value="Chicago">Chicago</option>
+                                
+                                    <option value="Chiba">Chiba</option>
+                                
+                                    <option value="Columbia">Columbia</option>
+                                
+                                    <option value="Kākināda">Kākināda</option>
+                                
+                                    <option value="Meleuz">Meleuz</option>
+                                
+                                    <option value="Chennai">Chennai</option>
+                                
+                                    <option value="Bethesda">Bethesda</option>
+                                
+                                    <option value="Okinawa">Okinawa</option>
+                                
+                                    <option value="Athens">Athens</option>
+                                
+                                    <option value="Pretoria">Pretoria</option>
+                                
+                                    <option value="Shanghai">Shanghai</option>
+                                
+                                    <option value="Santa Cruz de Tenerife">Santa Cruz de Tenerife</option>
+                                
+                                    <option value="Mansoûra">Mansoûra</option>
+                                
+                                    <option value="Allahābād">Allahābād</option>
+                                
+                                    <option value="Ottawa">Ottawa</option>
+                                
+                                    <option value="Pavia">Pavia</option>
+                                
+                                    <option value="Mary">Mary</option>
+                                
+                                    <option value="Utrecht">Utrecht</option>
+                                
+                                    <option value="Corvallis">Corvallis</option>
+                                
+                                    <option value="Buffalo">Buffalo</option>
+                                
+                                    <option value="Hong Kong">Hong Kong</option>
+                                
+                                    <option value="Harbin">Harbin</option>
+                                
+                                    <option value="Huntsville">Huntsville</option>
+                                
+                                    <option value="Suzhou">Suzhou</option>
+                                
+                                    <option value="Colombo">Colombo</option>
+                                
+                                    <option value="Colorado">Colorado</option>
+                                
+                                    <option value="Bay">Bay</option>
+                                
+                                    <option value="Federal">Federal</option>
+                                
+                                    <option value="Xi’an">Xi’an</option>
+                                
+                                    <option value="Subang Jaya">Subang Jaya</option>
+                                
+                                    <option value="Thalassery">Thalassery</option>
+                                
+                                    <option value="Tabūk">Tabūk</option>
+                                
+                                    <option value="Duisburg">Duisburg</option>
+                                
+                                    <option value="Poznań">Poznań</option>
+                                
+                                    <option value="Las Palmas de Gran Canaria">Las Palmas de Gran Canaria</option>
+                                
+                                    <option value="Mohali">Mohali</option>
+                                
+                                    <option value="Macau">Macau</option>
+                                
+                                    <option value="Ankara">Ankara</option>
+                                
+                                    <option value="Davis">Davis</option>
+                                
+                                    <option value="Zhanjiang">Zhanjiang</option>
+                                
+                                    <option value="Cape Town">Cape Town</option>
+                                
+                                    <option value="Changchun">Changchun</option>
+                                
+                                    <option value="Nanjing">Nanjing</option>
+                                
+                                    <option value="São Paulo">São Paulo</option>
+                                
+                                    <option value="Campinas">Campinas</option>
+                                
+                                    <option value="Toukh">Toukh</option>
+                                
+                                    <option value="Washington, D.C.">Washington, D.C.</option>
+                                
+                                    <option value="Göteborg">Göteborg</option>
+                                
+                                    <option value="Ibaraki">Ibaraki</option>
+                                
+                                    <option value="Bayreuth">Bayreuth</option>
+                                
+                                    <option value="Reykjavík">Reykjavík</option>
+                                
+                                    <option value="Cairo">Cairo</option>
+                                
+                                    <option value="Weihai">Weihai</option>
+                                
+                                    <option value="San Luis Obispo">San Luis Obispo</option>
+                                
+                                    <option value="Riyadh">Riyadh</option>
+                                
+                                    <option value="Bagé">Bagé</option>
+                                
+                                    <option value="Hernani">Hernani</option>
+                                
+                                    <option value="Sydney">Sydney</option>
+                                
+                                    <option value="Linz">Linz</option>
+                                
+                                    <option value="Ishikawa">Ishikawa</option>
+                                
+                                    <option value="Colchester">Colchester</option>
+                                
+                                    <option value="Hyderabad">Hyderabad</option>
+                                
+                                    <option value="Normal">Normal</option>
+                                
+                                    <option value="Akita">Akita</option>
+                                
+                                    <option value="Berkeley">Berkeley</option>
+                                
+                                    <option value="Dehradun">Dehradun</option>
+                                
+                                    <option value="Nagoya-shi">Nagoya-shi</option>
+                                
+                                    <option value="Kanda">Kanda</option>
+                                
+                                    <option value="San Diego">San Diego</option>
+                                
+                                    <option value="Onex">Onex</option>
+                                
+                                    <option value="Fuzhou">Fuzhou</option>
+                                
+                                    <option value="Dire Dawa">Dire Dawa</option>
+                                
+                                    <option value="Changsha">Changsha</option>
+                                
+                                    <option value="Hopkins">Hopkins</option>
+                                
+                                    <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                                
+                                    <option value="Parys">Parys</option>
+                                
+                                    <option value="Stellenbosch">Stellenbosch</option>
+                                
+                                    <option value="Machado">Machado</option>
+                                
+                                    <option value="Tel Aviv">Tel Aviv</option>
+                                
+                                    <option value="Houston">Houston</option>
+                                
+                                    <option value="Hobart">Hobart</option>
+                                
+                                    <option value="Saitama">Saitama</option>
+                                
+                                    <option value="Salzburg">Salzburg</option>
+                                
+                                    <option value="Gif-sur-Yvette">Gif-sur-Yvette</option>
+                                
+                                    <option value="Baltimore">Baltimore</option>
+                                
+                                    <option value="Green">Green</option>
+                                
+                                    <option value="Amritsar">Amritsar</option>
+                                
+                                    <option value="Khartoum">Khartoum</option>
+                                
+                                    <option value="Medellín">Medellín</option>
+                                
+                                    <option value="Vitória">Vitória</option>
+                                
+                                    <option value="Padova">Padova</option>
+                                
+                                    <option value="Piracicaba">Piracicaba</option>
+                                
+                                    <option value="Envigado">Envigado</option>
+                                
+                                    <option value="Chapecó">Chapecó</option>
+                                
+                                    <option value="Mexico City">Mexico City</option>
+                                
+                                    <option value="Gießen">Gießen</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Le Kremlin-Bic\u00eatre", "label": "Le Kremlin-Bic\u00eatre", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "College Park", "label": "College Park", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Edinburgh", "label": "Edinburgh", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Florian\u00f3polis", "label": "Florian\u00f3polis", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jinan", "label": "Jinan", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Xinxiang", "label": "Xinxiang", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vancouver", "label": "Vancouver", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pune", "label": "Pune", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wellington", "label": "Wellington", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Essen", "label": "Essen", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "La Laguna", "label": "La Laguna", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shengli", "label": "Shengli", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hangzhou", "label": "Hangzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lausanne", "label": "Lausanne", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Taylor", "label": "Taylor", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "New York City", "label": "New York City", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Guangzhou", "label": "Guangzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hiroshima-shi", "label": "Hiroshima-shi", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Krasnoyarsk", "label": "Krasnoyarsk", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yangzhou", "label": "Yangzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jilin", "label": "Jilin", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gyeongsan-si", "label": "Gyeongsan-si", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jingzhou", "label": "Jingzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Oregon", "label": "Oregon", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wuhan", "label": "Wuhan", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Oral", "label": "Oral", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Auckland", "label": "Auckland", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hirakata", "label": "Hirakata", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Riverside", "label": "Riverside", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tianjin", "label": "Tianjin", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chandigarh", "label": "Chandigarh", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Coimbatore", "label": "Coimbatore", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Potchefstroom", "label": "Potchefstroom", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bengbu", "label": "Bengbu", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wuxi", "label": "Wuxi", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ramadi", "label": "Ramadi", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Durham", "label": "Durham", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Monteiro", "label": "Monteiro", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Edmonton", "label": "Edmonton", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Los Angeles", "label": "Los Angeles", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pathankot", "label": "Pathankot", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Groningen", "label": "Groningen", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kusatsu", "label": "Kusatsu", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Da Nang", "label": "Da Nang", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sel\u00e7uk", "label": "Sel\u00e7uk", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thatta", "label": "Thatta", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Essex", "label": "Essex", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jalandhar", "label": "Jalandhar", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Colombia", "label": "Colombia", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lethbridge", "label": "Lethbridge", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ulm", "label": "Ulm", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Newcastle", "label": "Newcastle", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shenzhen", "label": "Shenzhen", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kunming", "label": "Kunming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wenzhou", "label": "Wenzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Royan", "label": "Royan", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Huangshi", "label": "Huangshi", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Linden", "label": "Linden", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "George", "label": "George", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ajman", "label": "Ajman", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dongfeng", "label": "Dongfeng", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Phoenix", "label": "Phoenix", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Guiyang", "label": "Guiyang", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Frome", "label": "Frome", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tondabayashich\u014d", "label": "Tondabayashich\u014d", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Singapore", "label": "Singapore", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zhenjiang", "label": "Zhenjiang", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Maastricht", "label": "Maastricht", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Santa Catarina", "label": "Santa Catarina", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bh\u012bmavaram", "label": "Bh\u012bmavaram", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "In\u0111ija", "label": "In\u0111ija", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Manchester", "label": "Manchester", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "El\u016bru", "label": "El\u016bru", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kanazawa-shi", "label": "Kanazawa-shi", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tehr\u0101n", "label": "Tehr\u0101n", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Union", "label": "Union", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Boulder", "label": "Boulder", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lomonosov", "label": "Lomonosov", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "London", "label": "London", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lages", "label": "Lages", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Montpellier", "label": "Montpellier", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gunt\u016br", "label": "Gunt\u016br", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Seattle", "label": "Seattle", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kottayam", "label": "Kottayam", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Spokane", "label": "Spokane", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pati\u0101la", "label": "Pati\u0101la", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lanzhou", "label": "Lanzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Konya", "label": "Konya", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cleveland", "label": "Cleveland", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Seoul", "label": "Seoul", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nagar", "label": "Nagar", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vienna", "label": "Vienna", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chengalpattu", "label": "Chengalpattu", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Maha Sarakham", "label": "Maha Sarakham", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Namur", "label": "Namur", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Temuco", "label": "Temuco", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Durg", "label": "Durg", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Madison", "label": "Madison", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Beijing", "label": "Beijing", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Federal Way", "label": "Federal Way", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tokyo", "label": "Tokyo", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tsukuba", "label": "Tsukuba", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hefei", "label": "Hefei", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jixi", "label": "Jixi", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Graz", "label": "Graz", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ufa", "label": "Ufa", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Moscow", "label": "Moscow", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Noto", "label": "Noto", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lincoln", "label": "Lincoln", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kowloon", "label": "Kowloon", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Johor Bahru", "label": "Johor Bahru", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fujisawa", "label": "Fujisawa", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jizan", "label": "Jizan", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chengdu", "label": "Chengdu", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bangkok", "label": "Bangkok", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chicago", "label": "Chicago", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chiba", "label": "Chiba", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Columbia", "label": "Columbia", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "K\u0101kin\u0101da", "label": "K\u0101kin\u0101da", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Meleuz", "label": "Meleuz", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chennai", "label": "Chennai", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bethesda", "label": "Bethesda", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Okinawa", "label": "Okinawa", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Athens", "label": "Athens", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pretoria", "label": "Pretoria", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shanghai", "label": "Shanghai", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Santa Cruz de Tenerife", "label": "Santa Cruz de Tenerife", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Manso\u00fbra", "label": "Manso\u00fbra", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Allah\u0101b\u0101d", "label": "Allah\u0101b\u0101d", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ottawa", "label": "Ottawa", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pavia", "label": "Pavia", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mary", "label": "Mary", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Utrecht", "label": "Utrecht", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Corvallis", "label": "Corvallis", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Buffalo", "label": "Buffalo", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hong Kong", "label": "Hong Kong", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Harbin", "label": "Harbin", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Huntsville", "label": "Huntsville", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Suzhou", "label": "Suzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Colombo", "label": "Colombo", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Colorado", "label": "Colorado", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bay", "label": "Bay", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Federal", "label": "Federal", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Xi\u2019an", "label": "Xi\u2019an", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Subang Jaya", "label": "Subang Jaya", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thalassery", "label": "Thalassery", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tab\u016bk", "label": "Tab\u016bk", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Duisburg", "label": "Duisburg", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pozna\u0144", "label": "Pozna\u0144", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Las Palmas de Gran Canaria", "label": "Las Palmas de Gran Canaria", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mohali", "label": "Mohali", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Macau", "label": "Macau", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ankara", "label": "Ankara", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Davis", "label": "Davis", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zhanjiang", "label": "Zhanjiang", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cape Town", "label": "Cape Town", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Changchun", "label": "Changchun", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nanjing", "label": "Nanjing", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "S\u00e3o Paulo", "label": "S\u00e3o Paulo", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Campinas", "label": "Campinas", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Toukh", "label": "Toukh", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Washington, D.C.", "label": "Washington, D.C.", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "G\u00f6teborg", "label": "G\u00f6teborg", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ibaraki", "label": "Ibaraki", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bayreuth", "label": "Bayreuth", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Reykjav\u00edk", "label": "Reykjav\u00edk", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cairo", "label": "Cairo", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Weihai", "label": "Weihai", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "San Luis Obispo", "label": "San Luis Obispo", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Riyadh", "label": "Riyadh", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bag\u00e9", "label": "Bag\u00e9", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hernani", "label": "Hernani", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sydney", "label": "Sydney", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Linz", "label": "Linz", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ishikawa", "label": "Ishikawa", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Colchester", "label": "Colchester", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hyderabad", "label": "Hyderabad", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Normal", "label": "Normal", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Akita", "label": "Akita", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Berkeley", "label": "Berkeley", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dehradun", "label": "Dehradun", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nagoya-shi", "label": "Nagoya-shi", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kanda", "label": "Kanda", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "San Diego", "label": "San Diego", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Onex", "label": "Onex", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fuzhou", "label": "Fuzhou", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dire Dawa", "label": "Dire Dawa", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Changsha", "label": "Changsha", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hopkins", "label": "Hopkins", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Thiruvananthapuram", "label": "Thiruvananthapuram", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Parys", "label": "Parys", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stellenbosch", "label": "Stellenbosch", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Machado", "label": "Machado", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tel Aviv", "label": "Tel Aviv", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Houston", "label": "Houston", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hobart", "label": "Hobart", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Saitama", "label": "Saitama", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Salzburg", "label": "Salzburg", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gif-sur-Yvette", "label": "Gif-sur-Yvette", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Baltimore", "label": "Baltimore", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Green", "label": "Green", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Amritsar", "label": "Amritsar", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Khartoum", "label": "Khartoum", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Medell\u00edn", "label": "Medell\u00edn", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vit\u00f3ria", "label": "Vit\u00f3ria", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Padova", "label": "Padova", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Piracicaba", "label": "Piracicaba", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Envigado", "label": "Envigado", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chapec\u00f3", "label": "Chapec\u00f3", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mexico City", "label": "Mexico City", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gie\u00dfen", "label": "Gie\u00dfen", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"from": "Campinas", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Monteiro", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Campinas", "to": "Monteiro", "weight": 1}, {"from": "Hobart", "to": "Johor Bahru", "weight": 1}, {"from": "Bag\u00e9", "to": "Johor Bahru", "weight": 1}, {"from": "Bag\u00e9", "to": "Hobart", "weight": 1}, {"from": "Colchester", "to": "Essex", "weight": 1}, {"from": "Fuzhou", "to": "Shengli", "weight": 1}, {"from": "La Laguna", "to": "Las Palmas de Gran Canaria", "weight": 1}, {"from": "La Laguna", "to": "Santa Cruz de Tenerife", "weight": 1}, {"from": "Las Palmas de Gran Canaria", "to": "Santa Cruz de Tenerife", "weight": 1}, {"from": "Cape Town", "to": "George", "weight": 1}, {"from": "Cape Town", "to": "Pretoria", "weight": 1}, {"from": "Cape Town", "to": "Stellenbosch", "weight": 1}, {"from": "George", "to": "Pretoria", "weight": 1}, {"from": "George", "to": "Stellenbosch", "weight": 1}, {"from": "Pretoria", "to": "Stellenbosch", "weight": 1}, {"from": "Guangzhou", "to": "Kunming", "weight": 1}, {"from": "Linz", "to": "Salzburg", "weight": 1}, {"from": "Graz", "to": "Linz", "weight": 1}, {"from": "Graz", "to": "Salzburg", "weight": 1}, {"from": "London", "to": "Ulm", "weight": 1}, {"from": "Bangkok", "to": "Seattle", "weight": 1}, {"from": "Bangkok", "to": "Washington, D.C.", "weight": 1}, {"from": "Bangkok", "to": "Onex", "weight": 1}, {"from": "Bangkok", "to": "Maha Sarakham", "weight": 1}, {"from": "Seattle", "to": "Washington, D.C.", "weight": 2}, {"from": "Onex", "to": "Seattle", "weight": 1}, {"from": "Maha Sarakham", "to": "Seattle", "weight": 1}, {"from": "Onex", "to": "Washington, D.C.", "weight": 1}, {"from": "Maha Sarakham", "to": "Washington, D.C.", "weight": 1}, {"from": "Maha Sarakham", "to": "Onex", "weight": 1}, {"from": "Bh\u012bmavaram", "to": "Gunt\u016br", "weight": 1}, {"from": "Bh\u012bmavaram", "to": "In\u0111ija", "weight": 1}, {"from": "Bh\u012bmavaram", "to": "Mary", "weight": 1}, {"from": "Ajman", "to": "Bh\u012bmavaram", "weight": 1}, {"from": "Bh\u012bmavaram", "to": "El\u016bru", "weight": 1}, {"from": "Bh\u012bmavaram", "to": "K\u0101kin\u0101da", "weight": 1}, {"from": "Gunt\u016br", "to": "In\u0111ija", "weight": 1}, {"from": "Gunt\u016br", "to": "Mary", "weight": 1}, {"from": "Ajman", "to": "Gunt\u016br", "weight": 1}, {"from": "El\u016bru", "to": "Gunt\u016br", "weight": 1}, {"from": "Gunt\u016br", "to": "K\u0101kin\u0101da", "weight": 1}, {"from": "In\u0111ija", "to": "Mary", "weight": 2}, {"from": "Ajman", "to": "In\u0111ija", "weight": 1}, {"from": "El\u016bru", "to": "In\u0111ija", "weight": 1}, {"from": "In\u0111ija", "to": "K\u0101kin\u0101da", "weight": 1}, {"from": "Ajman", "to": "Mary", "weight": 1}, {"from": "El\u016bru", "to": "Mary", "weight": 1}, {"from": "K\u0101kin\u0101da", "to": "Mary", "weight": 1}, {"from": "Ajman", "to": "El\u016bru", "weight": 1}, {"from": "Ajman", "to": "K\u0101kin\u0101da", "weight": 1}, {"from": "El\u016bru", "to": "K\u0101kin\u0101da", "weight": 1}, {"from": "Nanjing", "to": "Shenzhen", "weight": 1}, {"from": "Envigado", "to": "Mexico City", "weight": 1}, {"from": "Colombia", "to": "Envigado", "weight": 1}, {"from": "Envigado", "to": "Medell\u00edn", "weight": 1}, {"from": "Colombia", "to": "Mexico City", "weight": 1}, {"from": "Medell\u00edn", "to": "Mexico City", "weight": 1}, {"from": "Colombia", "to": "Medell\u00edn", "weight": 1}, {"from": "Beijing", "to": "Zhanjiang", "weight": 1}, {"from": "Changchun", "to": "Jilin", "weight": 3}, {"from": "Jilin", "to": "Manchester", "weight": 1}, {"from": "Jilin", "to": "Weihai", "weight": 1}, {"from": "Changchun", "to": "Manchester", "weight": 1}, {"from": "Changchun", "to": "Weihai", "weight": 1}, {"from": "Manchester", "to": "Weihai", "weight": 1}, {"from": "Gyeongsan-si", "to": "In\u0111ija", "weight": 1}, {"from": "Chengalpattu", "to": "Gyeongsan-si", "weight": 1}, {"from": "Chennai", "to": "Gyeongsan-si", "weight": 1}, {"from": "Coimbatore", "to": "Gyeongsan-si", "weight": 1}, {"from": "Gyeongsan-si", "to": "Nagar", "weight": 1}, {"from": "Chengalpattu", "to": "In\u0111ija", "weight": 1}, {"from": "Chennai", "to": "In\u0111ija", "weight": 2}, {"from": "Coimbatore", "to": "In\u0111ija", "weight": 1}, {"from": "In\u0111ija", "to": "Nagar", "weight": 1}, {"from": "Chengalpattu", "to": "Chennai", "weight": 1}, {"from": "Chengalpattu", "to": "Coimbatore", "weight": 1}, {"from": "Chengalpattu", "to": "Nagar", "weight": 1}, {"from": "Chennai", "to": "Coimbatore", "weight": 1}, {"from": "Chennai", "to": "Nagar", "weight": 1}, {"from": "Coimbatore", "to": "Nagar", "weight": 1}, {"from": "Singapore", "to": "Subang Jaya", "weight": 1}, {"from": "Singapore", "to": "Taylor", "weight": 1}, {"from": "Subang Jaya", "to": "Taylor", "weight": 1}, {"from": "Macau", "to": "Wellington", "weight": 1}, {"from": "Macau", "to": "Vit\u00f3ria", "weight": 1}, {"from": "Auckland", "to": "Macau", "weight": 1}, {"from": "Vit\u00f3ria", "to": "Wellington", "weight": 1}, {"from": "Auckland", "to": "Wellington", "weight": 1}, {"from": "Auckland", "to": "Vit\u00f3ria", "weight": 1}, {"from": "Pavia", "to": "Phoenix", "weight": 1}, {"from": "Duisburg", "to": "Pavia", "weight": 1}, {"from": "Essen", "to": "Pavia", "weight": 1}, {"from": "New York City", "to": "Pavia", "weight": 1}, {"from": "Duisburg", "to": "Phoenix", "weight": 1}, {"from": "Essen", "to": "Phoenix", "weight": 1}, {"from": "New York City", "to": "Phoenix", "weight": 1}, {"from": "Duisburg", "to": "Essen", "weight": 1}, {"from": "Duisburg", "to": "New York City", "weight": 1}, {"from": "Essen", "to": "New York City", "weight": 1}, {"from": "Nagoya-shi", "to": "Tokyo", "weight": 1}, {"from": "Dongfeng", "to": "Guangzhou", "weight": 1}, {"from": "Green", "to": "Jilin", "weight": 1}, {"from": "Beijing", "to": "Jilin", "weight": 2}, {"from": "Guiyang", "to": "Jilin", "weight": 1}, {"from": "Jilin", "to": "Riverside", "weight": 1}, {"from": "Changchun", "to": "Green", "weight": 1}, {"from": "Beijing", "to": "Changchun", "weight": 2}, {"from": "Changchun", "to": "Guiyang", "weight": 1}, {"from": "Changchun", "to": "Riverside", "weight": 1}, {"from": "Beijing", "to": "Green", "weight": 1}, {"from": "Green", "to": "Guiyang", "weight": 1}, {"from": "Green", "to": "Riverside", "weight": 1}, {"from": "Beijing", "to": "Guiyang", "weight": 1}, {"from": "Beijing", "to": "Riverside", "weight": 1}, {"from": "Guiyang", "to": "Riverside", "weight": 1}, {"from": "Nanjing", "to": "Normal", "weight": 1}, {"from": "Normal", "to": "Wuxi", "weight": 1}, {"from": "Nanjing", "to": "Wuxi", "weight": 1}, {"from": "In\u0111ija", "to": "Jalandhar", "weight": 1}, {"from": "In\u0111ija", "to": "Pathankot", "weight": 1}, {"from": "Amritsar", "to": "In\u0111ija", "weight": 1}, {"from": "Jalandhar", "to": "Pathankot", "weight": 1}, {"from": "Amritsar", "to": "Jalandhar", "weight": 1}, {"from": "Amritsar", "to": "Pathankot", "weight": 1}, {"from": "Allah\u0101b\u0101d", "to": "Manso\u00fbra", "weight": 1}, {"from": "In\u0111ija", "to": "Manso\u00fbra", "weight": 1}, {"from": "Dire Dawa", "to": "Manso\u00fbra", "weight": 1}, {"from": "Manso\u00fbra", "to": "Pune", "weight": 1}, {"from": "Allah\u0101b\u0101d", "to": "In\u0111ija", "weight": 1}, {"from": "Allah\u0101b\u0101d", "to": "Dire Dawa", "weight": 1}, {"from": "Allah\u0101b\u0101d", "to": "Pune", "weight": 1}, {"from": "Dire Dawa", "to": "In\u0111ija", "weight": 1}, {"from": "In\u0111ija", "to": "Pune", "weight": 2}, {"from": "Dire Dawa", "to": "Pune", "weight": 1}, {"from": "Berkeley", "to": "Guangzhou", "weight": 1}, {"from": "Berkeley", "to": "Jinan", "weight": 1}, {"from": "Guangzhou", "to": "Jinan", "weight": 1}, {"from": "Hangzhou", "to": "Shanghai", "weight": 1}, {"from": "Royan", "to": "Vienna", "weight": 1}, {"from": "Tehr\u0101n", "to": "Vienna", "weight": 1}, {"from": "Royan", "to": "Tehr\u0101n", "weight": 1}, {"from": "Colombo", "to": "San Luis Obispo", "weight": 1}, {"from": "Kanda", "to": "San Luis Obispo", "weight": 1}, {"from": "Boulder", "to": "San Luis Obispo", "weight": 1}, {"from": "Colorado", "to": "San Luis Obispo", "weight": 1}, {"from": "Colombo", "to": "Kanda", "weight": 1}, {"from": "Boulder", "to": "Colombo", "weight": 1}, {"from": "Colombo", "to": "Colorado", "weight": 1}, {"from": "Boulder", "to": "Kanda", "weight": 1}, {"from": "Colorado", "to": "Kanda", "weight": 1}, {"from": "Boulder", "to": "Colorado", "weight": 1}, {"from": "Bengbu", "to": "Hefei", "weight": 1}, {"from": "Hefei", "to": "Jixi", "weight": 1}, {"from": "Bengbu", "to": "Jixi", "weight": 1}, {"from": "Federal", "to": "Lages", "weight": 1}, {"from": "Federal", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Federal", "to": "Padova", "weight": 1}, {"from": "Federal", "to": "Piracicaba", "weight": 1}, {"from": "Federal", "to": "Machado", "weight": 1}, {"from": "Chapec\u00f3", "to": "Federal", "weight": 1}, {"from": "Federal", "to": "Santa Catarina", "weight": 2}, {"from": "Lages", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Lages", "to": "Padova", "weight": 1}, {"from": "Lages", "to": "Piracicaba", "weight": 1}, {"from": "Lages", "to": "Machado", "weight": 1}, {"from": "Chapec\u00f3", "to": "Lages", "weight": 1}, {"from": "Lages", "to": "Santa Catarina", "weight": 1}, {"from": "Padova", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Piracicaba", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Machado", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Chapec\u00f3", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Santa Catarina", "to": "S\u00e3o Paulo", "weight": 1}, {"from": "Padova", "to": "Piracicaba", "weight": 1}, {"from": "Machado", "to": "Padova", "weight": 1}, {"from": "Chapec\u00f3", "to": "Padova", "weight": 1}, {"from": "Padova", "to": "Santa Catarina", "weight": 1}, {"from": "Machado", "to": "Piracicaba", "weight": 1}, {"from": "Chapec\u00f3", "to": "Piracicaba", "weight": 1}, {"from": "Piracicaba", "to": "Santa Catarina", "weight": 1}, {"from": "Chapec\u00f3", "to": "Machado", "weight": 1}, {"from": "Machado", "to": "Santa Catarina", "weight": 1}, {"from": "Chapec\u00f3", "to": "Santa Catarina", "weight": 1}, {"from": "Federal", "to": "Hernani", "weight": 1}, {"from": "Federal", "to": "Florian\u00f3polis", "weight": 1}, {"from": "Hernani", "to": "Santa Catarina", "weight": 1}, {"from": "Florian\u00f3polis", "to": "Santa Catarina", "weight": 1}, {"from": "Florian\u00f3polis", "to": "Hernani", "weight": 1}, {"from": "Green", "to": "Shanghai", "weight": 1}, {"from": "In\u0111ija", "to": "Kottayam", "weight": 1}, {"from": "In\u0111ija", "to": "Thalassery", "weight": 1}, {"from": "Kottayam", "to": "Thalassery", "weight": 1}, {"from": "Chiba", "to": "Kusatsu", "weight": 1}, {"from": "Hefei", "to": "Shenzhen", "weight": 1}, {"from": "Guangzhou", "to": "Hefei", "weight": 1}, {"from": "Guangzhou", "to": "Shenzhen", "weight": 1}, {"from": "Fujisawa", "to": "Hiroshima-shi", "weight": 1}, {"from": "Hiroshima-shi", "to": "Kanazawa-shi", "weight": 1}, {"from": "Hiroshima-shi", "to": "Ishikawa", "weight": 1}, {"from": "Hiroshima-shi", "to": "Noto", "weight": 1}, {"from": "Fujisawa", "to": "Kanazawa-shi", "weight": 1}, {"from": "Fujisawa", "to": "Ishikawa", "weight": 1}, {"from": "Fujisawa", "to": "Noto", "weight": 1}, {"from": "Ishikawa", "to": "Kanazawa-shi", "weight": 1}, {"from": "Kanazawa-shi", "to": "Noto", "weight": 1}, {"from": "Ishikawa", "to": "Noto", "weight": 1}, {"from": "Groningen", "to": "Maastricht", "weight": 1}, {"from": "Beijing", "to": "Changsha", "weight": 1}, {"from": "Changchun", "to": "Changsha", "weight": 1}, {"from": "Changsha", "to": "Jilin", "weight": 1}, {"from": "Beijing", "to": "Union", "weight": 1}, {"from": "Dehradun", "to": "Edinburgh", "weight": 1}, {"from": "Edinburgh", "to": "In\u0111ija", "weight": 1}, {"from": "Edinburgh", "to": "Mary", "weight": 1}, {"from": "Edinburgh", "to": "Tel Aviv", "weight": 1}, {"from": "Edinburgh", "to": "Pati\u0101la", "weight": 1}, {"from": "Chandigarh", "to": "Edinburgh", "weight": 1}, {"from": "Edinburgh", "to": "Newcastle", "weight": 1}, {"from": "Edinburgh", "to": "Mohali", "weight": 1}, {"from": "Dehradun", "to": "In\u0111ija", "weight": 1}, {"from": "Dehradun", "to": "Mary", "weight": 1}, {"from": "Dehradun", "to": "Tel Aviv", "weight": 1}, {"from": "Dehradun", "to": "Pati\u0101la", "weight": 1}, {"from": "Chandigarh", "to": "Dehradun", "weight": 1}, {"from": "Dehradun", "to": "Newcastle", "weight": 1}, {"from": "Dehradun", "to": "Mohali", "weight": 1}, {"from": "In\u0111ija", "to": "Tel Aviv", "weight": 1}, {"from": "In\u0111ija", "to": "Pati\u0101la", "weight": 1}, {"from": "Chandigarh", "to": "In\u0111ija", "weight": 1}, {"from": "In\u0111ija", "to": "Newcastle", "weight": 1}, {"from": "In\u0111ija", "to": "Mohali", "weight": 1}, {"from": "Mary", "to": "Tel Aviv", "weight": 1}, {"from": "Mary", "to": "Pati\u0101la", "weight": 1}, {"from": "Chandigarh", "to": "Mary", "weight": 1}, {"from": "Mary", "to": "Newcastle", "weight": 1}, {"from": "Mary", "to": "Mohali", "weight": 1}, {"from": "Pati\u0101la", "to": "Tel Aviv", "weight": 1}, {"from": "Chandigarh", "to": "Tel Aviv", "weight": 1}, {"from": "Newcastle", "to": "Tel Aviv", "weight": 1}, {"from": "Mohali", "to": "Tel Aviv", "weight": 1}, {"from": "Chandigarh", "to": "Pati\u0101la", "weight": 1}, {"from": "Newcastle", "to": "Pati\u0101la", "weight": 1}, {"from": "Mohali", "to": "Pati\u0101la", "weight": 1}, {"from": "Chandigarh", "to": "Newcastle", "weight": 1}, {"from": "Chandigarh", "to": "Mohali", "weight": 1}, {"from": "Mohali", "to": "Newcastle", "weight": 1}, {"from": "Tokyo", "to": "Wuhan", "weight": 1}, {"from": "Tsukuba", "to": "Wuhan", "weight": 1}, {"from": "Ibaraki", "to": "Wuhan", "weight": 1}, {"from": "Los Angeles", "to": "Wuhan", "weight": 1}, {"from": "Durg", "to": "Wuhan", "weight": 1}, {"from": "Tokyo", "to": "Tsukuba", "weight": 1}, {"from": "Ibaraki", "to": "Tokyo", "weight": 1}, {"from": "Los Angeles", "to": "Tokyo", "weight": 1}, {"from": "Durg", "to": "Tokyo", "weight": 1}, {"from": "Ibaraki", "to": "Tsukuba", "weight": 1}, {"from": "Los Angeles", "to": "Tsukuba", "weight": 1}, {"from": "Durg", "to": "Tsukuba", "weight": 1}, {"from": "Ibaraki", "to": "Los Angeles", "weight": 1}, {"from": "Durg", "to": "Ibaraki", "weight": 1}, {"from": "Durg", "to": "Los Angeles", "weight": 1}, {"from": "Union", "to": "Wuhan", "weight": 1}, {"from": "Shanghai", "to": "Union", "weight": 1}, {"from": "Guangzhou", "to": "Union", "weight": 1}, {"from": "Shanghai", "to": "Wuhan", "weight": 1}, {"from": "Guangzhou", "to": "Wuhan", "weight": 1}, {"from": "Guangzhou", "to": "Shanghai", "weight": 1}, {"from": "Baltimore", "to": "Ottawa", "weight": 1}, {"from": "Ottawa", "to": "San Diego", "weight": 1}, {"from": "Ottawa", "to": "Utrecht", "weight": 1}, {"from": "Buffalo", "to": "Ottawa", "weight": 1}, {"from": "G\u00f6teborg", "to": "Ottawa", "weight": 1}, {"from": "Hopkins", "to": "Ottawa", "weight": 1}, {"from": "New York City", "to": "Ottawa", "weight": 1}, {"from": "Bethesda", "to": "Ottawa", "weight": 1}, {"from": "Athens", "to": "Ottawa", "weight": 1}, {"from": "Davis", "to": "Ottawa", "weight": 1}, {"from": "Moscow", "to": "Ottawa", "weight": 1}, {"from": "Gie\u00dfen", "to": "Ottawa", "weight": 1}, {"from": "Baltimore", "to": "San Diego", "weight": 1}, {"from": "Baltimore", "to": "Utrecht", "weight": 1}, {"from": "Baltimore", "to": "Buffalo", "weight": 1}, {"from": "Baltimore", "to": "G\u00f6teborg", "weight": 1}, {"from": "Baltimore", "to": "Hopkins", "weight": 1}, {"from": "Baltimore", "to": "New York City", "weight": 1}, {"from": "Baltimore", "to": "Bethesda", "weight": 1}, {"from": "Athens", "to": "Baltimore", "weight": 1}, {"from": "Baltimore", "to": "Davis", "weight": 1}, {"from": "Baltimore", "to": "Moscow", "weight": 1}, {"from": "Baltimore", "to": "Gie\u00dfen", "weight": 1}, {"from": "San Diego", "to": "Utrecht", "weight": 1}, {"from": "Buffalo", "to": "San Diego", "weight": 1}, {"from": "G\u00f6teborg", "to": "San Diego", "weight": 1}, {"from": "Hopkins", "to": "San Diego", "weight": 1}, {"from": "New York City", "to": "San Diego", "weight": 1}, {"from": "Bethesda", "to": "San Diego", "weight": 1}, {"from": "Athens", "to": "San Diego", "weight": 1}, {"from": "Davis", "to": "San Diego", "weight": 1}, {"from": "Moscow", "to": "San Diego", "weight": 1}, {"from": "Gie\u00dfen", "to": "San Diego", "weight": 1}, {"from": "Buffalo", "to": "Utrecht", "weight": 1}, {"from": "G\u00f6teborg", "to": "Utrecht", "weight": 1}, {"from": "Hopkins", "to": "Utrecht", "weight": 1}, {"from": "New York City", "to": "Utrecht", "weight": 1}, {"from": "Bethesda", "to": "Utrecht", "weight": 1}, {"from": "Athens", "to": "Utrecht", "weight": 1}, {"from": "Davis", "to": "Utrecht", "weight": 1}, {"from": "Moscow", "to": "Utrecht", "weight": 1}, {"from": "Gie\u00dfen", "to": "Utrecht", "weight": 1}, {"from": "Buffalo", "to": "G\u00f6teborg", "weight": 1}, {"from": "Buffalo", "to": "Hopkins", "weight": 1}, {"from": "Buffalo", "to": "New York City", "weight": 2}, {"from": "Bethesda", "to": "Buffalo", "weight": 1}, {"from": "Athens", "to": "Buffalo", "weight": 1}, {"from": "Buffalo", "to": "Davis", "weight": 1}, {"from": "Buffalo", "to": "Moscow", "weight": 1}, {"from": "Buffalo", "to": "Gie\u00dfen", "weight": 1}, {"from": "G\u00f6teborg", "to": "Hopkins", "weight": 1}, {"from": "G\u00f6teborg", "to": "New York City", "weight": 1}, {"from": "Bethesda", "to": "G\u00f6teborg", "weight": 1}, {"from": "Athens", "to": "G\u00f6teborg", "weight": 1}, {"from": "Davis", "to": "G\u00f6teborg", "weight": 1}, {"from": "G\u00f6teborg", "to": "Moscow", "weight": 1}, {"from": "Gie\u00dfen", "to": "G\u00f6teborg", "weight": 1}, {"from": "Hopkins", "to": "New York City", "weight": 1}, {"from": "Bethesda", "to": "Hopkins", "weight": 1}, {"from": "Athens", "to": "Hopkins", "weight": 1}, {"from": "Davis", "to": "Hopkins", "weight": 1}, {"from": "Hopkins", "to": "Moscow", "weight": 1}, {"from": "Gie\u00dfen", "to": "Hopkins", "weight": 1}, {"from": "Bethesda", "to": "New York City", "weight": 1}, {"from": "Athens", "to": "New York City", "weight": 1}, {"from": "Davis", "to": "New York City", "weight": 1}, {"from": "Moscow", "to": "New York City", "weight": 1}, {"from": "Gie\u00dfen", "to": "New York City", "weight": 1}, {"from": "Athens", "to": "Bethesda", "weight": 1}, {"from": "Bethesda", "to": "Davis", "weight": 1}, {"from": "Bethesda", "to": "Moscow", "weight": 1}, {"from": "Bethesda", "to": "Gie\u00dfen", "weight": 1}, {"from": "Athens", "to": "Davis", "weight": 1}, {"from": "Athens", "to": "Moscow", "weight": 1}, {"from": "Athens", "to": "Gie\u00dfen", "weight": 1}, {"from": "Davis", "to": "Moscow", "weight": 1}, {"from": "Davis", "to": "Gie\u00dfen", "weight": 1}, {"from": "Gie\u00dfen", "to": "Moscow", "weight": 1}, {"from": "Green", "to": "Sydney", "weight": 1}, {"from": "Lausanne", "to": "Reykjav\u00edk", "weight": 1}, {"from": "Durham", "to": "Reykjav\u00edk", "weight": 1}, {"from": "Durham", "to": "Lausanne", "weight": 1}, {"from": "Hong Kong", "to": "In\u0111ija", "weight": 1}, {"from": "In\u0111ija", "to": "Kowloon", "weight": 1}, {"from": "Hong Kong", "to": "Pune", "weight": 1}, {"from": "Hong Kong", "to": "Kowloon", "weight": 1}, {"from": "Kowloon", "to": "Pune", "weight": 1}, {"from": "Frome", "to": "Seoul", "weight": 1}, {"from": "Huangshi", "to": "Jingzhou", "weight": 1}, {"from": "Beijing", "to": "Huangshi", "weight": 1}, {"from": "Huangshi", "to": "Normal", "weight": 1}, {"from": "Guangzhou", "to": "Huangshi", "weight": 1}, {"from": "Beijing", "to": "Jingzhou", "weight": 1}, {"from": "Jingzhou", "to": "Normal", "weight": 1}, {"from": "Guangzhou", "to": "Jingzhou", "weight": 1}, {"from": "Beijing", "to": "Normal", "weight": 1}, {"from": "Beijing", "to": "Guangzhou", "weight": 1}, {"from": "Guangzhou", "to": "Normal", "weight": 1}, {"from": "Chengdu", "to": "Oral", "weight": 1}, {"from": "Corvallis", "to": "Tondabayashich\u014d", "weight": 1}, {"from": "Oregon", "to": "Tondabayashich\u014d", "weight": 1}, {"from": "Corvallis", "to": "Oregon", "weight": 1}, {"from": "Hyderabad", "to": "Thatta", "weight": 1}, {"from": "Thatta", "to": "Thiruvananthapuram", "weight": 1}, {"from": "In\u0111ija", "to": "Thatta", "weight": 1}, {"from": "Hyderabad", "to": "Thiruvananthapuram", "weight": 1}, {"from": "Hyderabad", "to": "In\u0111ija", "weight": 1}, {"from": "In\u0111ija", "to": "Thiruvananthapuram", "weight": 1}, {"from": "Seattle", "to": "Vancouver", "weight": 1}, {"from": "Federal Way", "to": "Seattle", "weight": 1}, {"from": "Seattle", "to": "Spokane", "weight": 1}, {"from": "Federal Way", "to": "Vancouver", "weight": 1}, {"from": "Vancouver", "to": "Washington, D.C.", "weight": 1}, {"from": "Spokane", "to": "Vancouver", "weight": 1}, {"from": "Federal Way", "to": "Washington, D.C.", "weight": 1}, {"from": "Federal Way", "to": "Spokane", "weight": 1}, {"from": "Spokane", "to": "Washington, D.C.", "weight": 1}, {"from": "Columbia", "to": "New York City", "weight": 1}, {"from": "New York City", "to": "Saitama", "weight": 1}, {"from": "Buffalo", "to": "Columbia", "weight": 1}, {"from": "Columbia", "to": "Saitama", "weight": 1}, {"from": "Buffalo", "to": "Saitama", "weight": 1}, {"from": "Cleveland", "to": "Washington, D.C.", "weight": 1}, {"from": "Wenzhou", "to": "Xi\u2019an", "weight": 1}, {"from": "Beijing", "to": "Wenzhou", "weight": 1}, {"from": "Bay", "to": "Wenzhou", "weight": 1}, {"from": "Shenzhen", "to": "Wenzhou", "weight": 1}, {"from": "Beijing", "to": "Xi\u2019an", "weight": 1}, {"from": "Bay", "to": "Xi\u2019an", "weight": 1}, {"from": "Shenzhen", "to": "Xi\u2019an", "weight": 1}, {"from": "Bay", "to": "Beijing", "weight": 1}, {"from": "Beijing", "to": "Shenzhen", "weight": 1}, {"from": "Bay", "to": "Shenzhen", "weight": 1}, {"from": "Jizan", "to": "Riyadh", "weight": 1}, {"from": "In\u0111ija", "to": "Riyadh", "weight": 1}, {"from": "Riyadh", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Riyadh", "to": "Tab\u016bk", "weight": 1}, {"from": "Khartoum", "to": "Riyadh", "weight": 1}, {"from": "Ramadi", "to": "Riyadh", "weight": 1}, {"from": "Chennai", "to": "Riyadh", "weight": 1}, {"from": "Potchefstroom", "to": "Riyadh", "weight": 1}, {"from": "Konya", "to": "Riyadh", "weight": 1}, {"from": "Da Nang", "to": "Riyadh", "weight": 1}, {"from": "In\u0111ija", "to": "Jizan", "weight": 1}, {"from": "Jizan", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Jizan", "to": "Tab\u016bk", "weight": 1}, {"from": "Jizan", "to": "Khartoum", "weight": 1}, {"from": "Jizan", "to": "Ramadi", "weight": 1}, {"from": "Chennai", "to": "Jizan", "weight": 1}, {"from": "Jizan", "to": "Potchefstroom", "weight": 1}, {"from": "Jizan", "to": "Konya", "weight": 1}, {"from": "Da Nang", "to": "Jizan", "weight": 1}, {"from": "In\u0111ija", "to": "Sel\u00e7uk", "weight": 1}, {"from": "In\u0111ija", "to": "Tab\u016bk", "weight": 1}, {"from": "In\u0111ija", "to": "Khartoum", "weight": 1}, {"from": "In\u0111ija", "to": "Ramadi", "weight": 1}, {"from": "In\u0111ija", "to": "Potchefstroom", "weight": 1}, {"from": "In\u0111ija", "to": "Konya", "weight": 1}, {"from": "Da Nang", "to": "In\u0111ija", "weight": 1}, {"from": "Sel\u00e7uk", "to": "Tab\u016bk", "weight": 1}, {"from": "Khartoum", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Ramadi", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Chennai", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Potchefstroom", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Konya", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Da Nang", "to": "Sel\u00e7uk", "weight": 1}, {"from": "Khartoum", "to": "Tab\u016bk", "weight": 1}, {"from": "Ramadi", "to": "Tab\u016bk", "weight": 1}, {"from": "Chennai", "to": "Tab\u016bk", "weight": 1}, {"from": "Potchefstroom", "to": "Tab\u016bk", "weight": 1}, {"from": "Konya", "to": "Tab\u016bk", "weight": 1}, {"from": "Da Nang", "to": "Tab\u016bk", "weight": 1}, {"from": "Khartoum", "to": "Ramadi", "weight": 1}, {"from": "Chennai", "to": "Khartoum", "weight": 1}, {"from": "Khartoum", "to": "Potchefstroom", "weight": 1}, {"from": "Khartoum", "to": "Konya", "weight": 1}, {"from": "Da Nang", "to": "Khartoum", "weight": 1}, {"from": "Chennai", "to": "Ramadi", "weight": 1}, {"from": "Potchefstroom", "to": "Ramadi", "weight": 1}, {"from": "Konya", "to": "Ramadi", "weight": 1}, {"from": "Da Nang", "to": "Ramadi", "weight": 1}, {"from": "Chennai", "to": "Potchefstroom", "weight": 1}, {"from": "Chennai", "to": "Konya", "weight": 1}, {"from": "Chennai", "to": "Da Nang", "weight": 1}, {"from": "Konya", "to": "Potchefstroom", "weight": 1}, {"from": "Da Nang", "to": "Potchefstroom", "weight": 1}, {"from": "Da Nang", "to": "Konya", "weight": 1}, {"from": "Berkeley", "to": "Madison", "weight": 1}, {"from": "Linden", "to": "Madison", "weight": 1}, {"from": "Lethbridge", "to": "Madison", "weight": 1}, {"from": "Huntsville", "to": "Madison", "weight": 1}, {"from": "Berkeley", "to": "Linden", "weight": 1}, {"from": "Berkeley", "to": "Lethbridge", "weight": 1}, {"from": "Berkeley", "to": "Huntsville", "weight": 1}, {"from": "Lethbridge", "to": "Linden", "weight": 1}, {"from": "Huntsville", "to": "Linden", "weight": 1}, {"from": "Huntsville", "to": "Lethbridge", "weight": 1}, {"from": "Gif-sur-Yvette", "to": "Le Kremlin-Bic\u00eatre", "weight": 1}, {"from": "Le Kremlin-Bic\u00eatre", "to": "Parys", "weight": 1}, {"from": "Le Kremlin-Bic\u00eatre", "to": "Pozna\u0144", "weight": 1}, {"from": "Le Kremlin-Bic\u00eatre", "to": "Namur", "weight": 1}, {"from": "Gif-sur-Yvette", "to": "Parys", "weight": 1}, {"from": "Gif-sur-Yvette", "to": "Pozna\u0144", "weight": 1}, {"from": "Gif-sur-Yvette", "to": "Namur", "weight": 1}, {"from": "Parys", "to": "Pozna\u0144", "weight": 1}, {"from": "Namur", "to": "Parys", "weight": 1}, {"from": "Namur", "to": "Pozna\u0144", "weight": 1}, {"from": "Edmonton", "to": "London", "weight": 1}, {"from": "Edmonton", "to": "Vancouver", "weight": 1}, {"from": "Columbia", "to": "Edmonton", "weight": 1}, {"from": "London", "to": "Vancouver", "weight": 1}, {"from": "Columbia", "to": "London", "weight": 1}, {"from": "Columbia", "to": "Vancouver", "weight": 1}, {"from": "Federal", "to": "Meleuz", "weight": 1}, {"from": "Federal", "to": "Moscow", "weight": 4}, {"from": "Federal", "to": "Ufa", "weight": 1}, {"from": "Meleuz", "to": "Moscow", "weight": 1}, {"from": "Meleuz", "to": "Ufa", "weight": 1}, {"from": "Moscow", "to": "Ufa", "weight": 1}, {"from": "Moscow", "to": "Union", "weight": 1}, {"from": "Lomonosov", "to": "Moscow", "weight": 1}, {"from": "Federal", "to": "Krasnoyarsk", "weight": 1}, {"from": "Sydney", "to": "Yangzhou", "weight": 1}, {"from": "Montpellier", "to": "Temuco", "weight": 1}, {"from": "Lanzhou", "to": "Shanghai", "weight": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
